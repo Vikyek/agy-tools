@@ -26,10 +26,10 @@ index 2a3069d..1b65f1d 100644
          all_keys = set.union(*key_sets)
          common_keys = set.intersection(*key_sets)
 diff --git a/src/toon_converter.py b/src/toon_converter.py
-index 6fa0fd0..a93915a 100644
+index 6fa0fd0..65028b2 100644
 --- a/src/toon_converter.py
 +++ b/src/toon_converter.py
-@@ -177,11 +177,14 @@ class TOONConverter:
+@@ -177,11 +177,22 @@ class TOONConverter:
          if not arr:
              return []
 
@@ -40,8 +40,16 @@ index 6fa0fd0..a93915a 100644
 +        first_item = arr[0]
 +        if isinstance(first_item, dict):
 +            first_keys = first_item.keys()
++
 +            # Fast fail check if all items are dicts with the same keys as the first item
-+            if all(isinstance(item, dict) and item.keys() == first_keys for item in arr):
++            is_uniform = all(isinstance(item, dict) and item.keys() == first_keys for item in arr)
++
++            if not is_uniform and all(isinstance(item, dict) for item in arr):
++                # Fallback for identical key sets in different order
++                key_sets = [set(item.keys()) for item in arr]
++                is_uniform = len({tuple(sorted(ks)) for ks in key_sets}) == 1
++
++            if is_uniform:
                  # All objects have identical keys — encode as schema + value rows
 -                keys = sorted(arr[0].keys())
 +                keys = sorted(first_keys)
