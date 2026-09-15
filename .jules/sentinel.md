@@ -17,3 +17,8 @@
 **Vulnerability:** A command injection vulnerability existed where `subprocess.run(["git", "rebase", "origin/main", branch])` (and `merge`, `push`) allowed option injection if a branch name started with a dash.
 **Learning:** `git` and other CLI tools can interpret arguments that start with `-` as options rather than positional arguments. A previous patch only mitigated this for `git branch -d` and `git push --delete`.
 **Prevention:** Always use `--` in subprocess calls to explicitly denote the end of options and the beginning of positional arguments for all git commands taking arbitrary branch names (e.g. `subprocess.run(["git", "rebase", "origin/main", "--", branch])`).
+
+## 2025-03-09 - Prevent option injection in vras-submodule
+**Vulnerability:** A command injection vulnerability existed where `vras-submodule` passed user-supplied variables directly to `git submodule` commands (like `status`, `update`, `deinit`). This allowed option injection if a module name started with a dash.
+**Learning:** Shell scripts taking user input and passing it to command-line tools can lead to option injection vulnerabilities.
+**Prevention:** Always use `--` in shell script calls to explicitly denote the end of options and the beginning of positional arguments for external commands taking arbitrary names (e.g. `git submodule status -- "$mod"`).
