@@ -1,0 +1,69 @@
+From b00ae32611d5c602cbc18101435ebb32b4c70156 Mon Sep 17 00:00:00 2001
+From: "google-labs-jules[bot]"
+ <161369871+google-labs-jules[bot]@users.noreply.github.com>
+Date: Mon, 14 Sep 2026 07:20:38 +0000
+Subject: [PATCH] Optimize pattern traversal
+
+---
+ src/patterns.py       | 18 +++++++++---------
+ src/toon_converter.py | 15 ++++++++-------
+ 2 files changed, 17 insertions(+), 16 deletions(-)
+
+diff --git a/src/patterns.py b/src/patterns.py
+index 2a3069d..6bd4ec9 100644
+--- a/src/patterns.py
++++ b/src/patterns.py
+@@ -93,16 +93,16 @@ class PatternDetector:
+
+         return sorted(self.detected_patterns, key=lambda p: p.confidence, reverse=True)
+
+-    def _traverse(self, data: Any, path: str = '') -> None:
++    def _traverse(self, data: Any) -> None:
+         """Traverse data and collect key statistics."""
+-        if isinstance(data, dict):
+-            for key, value in data.items():
+-                self.key_frequency[key] += 1
+-                self._traverse(value, f"{path}.{key}")
+-
+-        elif isinstance(data, list):
+-            for i, item in enumerate(data):
+-                self._traverse(item, f"{path}[{i}]")
++        stack = [data]
++        while stack:
++            current = stack.pop()
++            if isinstance(current, dict):
++                self.key_frequency.update(current.keys())
++                stack.extend(current.values())
++            elif isinstance(current, list):
++                stack.extend(current)
+
+     def _detect_api_response(self, data: Any) -> None:
+         """Detect API response patterns."""
+diff --git a/src/toon_converter.py b/src/toon_converter.py
+index 6fa0fd0..92b83a6 100644
+--- a/src/toon_converter.py
++++ b/src/toon_converter.py
+@@ -107,13 +107,14 @@ class TOONConverter:
+
+     def _build_ref_cache(self, data: Any) -> None:
+         """Traverse data and collect key frequencies for aggressive-mode abbreviation."""
+-        if isinstance(data, dict):
+-            for key, value in data.items():
+-                self.key_freq[key] += 1
+-                self._build_ref_cache(value)
+-        elif isinstance(data, list):
+-            for item in data:
+-                self._build_ref_cache(item)
++        stack = [data]
++        while stack:
++            current = stack.pop()
++            if isinstance(current, dict):
++                self.key_freq.update(current.keys())
++                stack.extend(current.values())
++            elif isinstance(current, list):
++                stack.extend(current)
+
+     def _build_custom_abbrev(self) -> Dict[str, str]:
+         """
+--
+2.53.0
