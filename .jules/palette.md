@@ -9,3 +9,6 @@
 ## 2026-09-08 - Respecting NO_COLOR Standard in CLI
 **Learning:** Terminal utilities that use ANSI escape codes for semantic formatting (like green for enabled, red for disabled) must provide a way to disable color output. This ensures accessibility for users with color vision deficiency or environments that don't support color rendering.
 **Action:** Always check the `NO_COLOR` environment variable before applying ANSI escape codes in CLI tools.
+## 2024-05-24 - Dynamic Coordinates and Vim Keys in Curses
+**Learning:** Curses-based applications require dynamic text length calculations (using functions like `len()`) for coordinate inputs, as hardcoded values will cause cursor misalignments and overlapping text when window sizes or dynamic text changes. Standard arrow keys also fall short of expectations for power users needing Vim keybindings (`j` and `k`) for list navigation.
+**Action:** When building or modifying curses-based TUI applications, calculate dynamic string lengths for input X-coordinates and always map standard Vim keybindings (`j/k`) alongside arrow keys for intuitive navigation.

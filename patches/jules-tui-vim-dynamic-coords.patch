@@ -1,0 +1,30 @@
+diff --git a/jules_tui.py b/jules_tui.py
+index cc0f53c..8706573 100755
+--- a/jules_tui.py
++++ b/jules_tui.py
+@@ -102,9 +102,9 @@ def draw_menu(stdscr):
+
+         if key in (ord('q'), ord('Q')):
+             break
+-        elif key == curses.KEY_UP and selected_idx > 0:
++        elif key in (curses.KEY_UP, ord('k'), ord('K')) and selected_idx > 0:
+             selected_idx -= 1
+-        elif key == curses.KEY_DOWN and selected_idx < len(sessions_cache) - 1:
++        elif key in (curses.KEY_DOWN, ord('j'), ord('J')) and selected_idx < len(sessions_cache) - 1:
+             selected_idx += 1
+         elif key in (ord('r'), ord('R')):
+             last_fetch = 0
+@@ -133,10 +133,12 @@ def prompt_reply(stdscr, session_id):
+     curses.echo()
+     curses.curs_set(1)
+     stdscr.addstr(height - 3, 2, " " * (width - 4))
+-    stdscr.addstr(height - 3, 2, f"Enter response for [{session_id[:12]}]: ", curses.color_pair(3) | curses.A_BOLD)
++    prompt_text = f"Enter response for [{session_id[:12]}]: "
++    stdscr.addstr(height - 3, 2, prompt_text, curses.color_pair(3) | curses.A_BOLD)
+     stdscr.refresh()
+
+-    msg_bytes = stdscr.getstr(height - 3, 36, width - 40)
++    prompt_len = len(prompt_text)
++    msg_bytes = stdscr.getstr(height - 3, 2 + prompt_len, width - (2 + prompt_len + 4))
+     curses.noecho()
+     curses.curs_set(0)
