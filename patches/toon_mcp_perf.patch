@@ -26,10 +26,36 @@ index 2a3069d..1b65f1d 100644
          all_keys = set.union(*key_sets)
          common_keys = set.intersection(*key_sets)
 diff --git a/src/toon_converter.py b/src/toon_converter.py
-index 6fa0fd0..a93915a 100644
+index 6fa0fd0..ad28307 100644
 --- a/src/toon_converter.py
 +++ b/src/toon_converter.py
-@@ -177,11 +177,14 @@ class TOONConverter:
+@@ -106,14 +106,17 @@ class TOONConverter:
+         return json.dumps(json_data, indent=2)
+
+     def _build_ref_cache(self, data: Any) -> None:
+-        """Traverse data and collect key frequencies for aggressive-mode abbreviation."""
+-        if isinstance(data, dict):
+-            for key, value in data.items():
+-                self.key_freq[key] += 1
+-                self._build_ref_cache(value)
+-        elif isinstance(data, list):
+-            for item in data:
+-                self._build_ref_cache(item)
++        """Traverse data and collect key frequencies for aggressive-mode abbreviation.
++        Optimized with an iterative stack and bulk native operations to minimize overhead."""
++        stack = [data]
++        while stack:
++            current = stack.pop()
++            if isinstance(current, dict):
++                # We can safely use self.key_freq.update(current.keys()) because it is always initialized as Counter()
++                self.key_freq.update(current.keys())
++                stack.extend(current.values())
++            elif isinstance(current, list):
++                stack.extend(current)
+
+     def _build_custom_abbrev(self) -> Dict[str, str]:
+         """
+@@ -177,11 +180,14 @@ class TOONConverter:
          if not arr:
              return []
 
