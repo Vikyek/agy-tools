@@ -1,0 +1,43 @@
+From cc3818074624f7b531189578efb659fdf05f4313 Mon Sep 17 00:00:00 2001
+From: "google-labs-jules[bot]"
+ <161369871+google-labs-jules[bot]@users.noreply.github.com>
+Date: Fri, 18 Sep 2026 05:21:07 +0000
+Subject: [PATCH] =?UTF-8?q?=E2=9A=A1=20Bolt:=20Optimize=20array=20schema?=
+ =?UTF-8?q?=20consistency=20check?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+---
+ src/patterns.py | 14 ++++++++++----
+ 1 file changed, 10 insertions(+), 4 deletions(-)
+
+diff --git a/src/patterns.py b/src/patterns.py
+index 2a3069d..1b65f1d 100644
+--- a/src/patterns.py
++++ b/src/patterns.py
+@@ -271,12 +271,18 @@ class PatternDetector:
+         if not arr:
+             return 0.0
+
+-        # Get all unique key sets
+-        key_sets = [set(item.keys()) for item in arr if isinstance(item, dict)]
+-
+-        if not key_sets:
++        valid_items = [item for item in arr if isinstance(item, dict)]
++        if not valid_items:
+             return 0.0
+
++        # Fast path for perfectly homogeneous arrays
++        first_keys = valid_items[0].keys()
++        if all(item.keys() == first_keys for item in valid_items):
++            return 1.0
++
++        # Get all unique key sets
++        key_sets = [set(item.keys()) for item in valid_items]
++
+         # Calculate consistency based on key overlap
+         all_keys = set.union(*key_sets)
+         common_keys = set.intersection(*key_sets)
+--
+2.53.0
