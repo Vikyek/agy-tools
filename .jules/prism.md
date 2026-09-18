@@ -1,3 +1,6 @@
 ## 2024-05-24 - Semantic Logging in Shell Scripts
 **Learning:** Raw `echo` statements in setup scripts lead to unstructured walls of text. Standardized functions (`info`, `warn`, `error`, `success`) equipped with ANSI colors significantly improve developer scannability, provided they check `NO_COLOR` and route errors to stderr.
 **Action:** Always implement and use a `NO_COLOR`-compliant logging block with proper stdout/stderr separation instead of plain `echo` for long shell setup sequences. Use `>/dev/null` for spammy standard command outputs (like `pip install`) to keep logs concise while preserving their internal error traces.
+## 2024-09-18 - Truncating and dimming Git commit hashes in lists
+**Learning:** Long 40-character commit hashes in terminal list outputs create significant visual noise and distract from the primary status information (like ENABLED/DISABLED). Additionally, Bash regex matching with hyphenated classes (e.g. `^[-+U]`) requires the hyphen to be the first or last character to avoid being treated as a range.
+**Action:** When printing long metadata strings (like commit hashes) in terminal lists, truncate them (e.g., to 7 characters after any `+`/`-`/`U` prefix) and use dim ANSI coloring (`\e[2m`) to reduce visual noise and maintain visual hierarchy while ensuring grepability.
