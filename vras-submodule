@@ -96,7 +96,19 @@ cmd_list() {
             # Extract commit hash from the line, preserving any + or U prefixes as in original script
             local commit_hash
             commit_hash=$(echo "$mod_line" | awk '{print $1}')
-            printf "  ${COLOR_GREEN}● ENABLED ${COLOR_RESET} %-20s (%s)\n" "$mod" "$commit_hash"
+            local short_hash
+            if [[ "$commit_hash" =~ ^[-+U] ]]; then
+                short_hash="${commit_hash:0:8}"
+            else
+                short_hash="${commit_hash:0:7}"
+            fi
+
+            local COLOR_DIM='\e[2m'
+            if [ -n "${NO_COLOR:-}" ]; then
+                COLOR_DIM=''
+            fi
+
+            printf "  ${COLOR_GREEN}● ENABLED ${COLOR_RESET} %-20s ${COLOR_DIM}(%s)${COLOR_RESET}\n" "$mod" "$short_hash"
         else
             printf "  ${COLOR_RED}○ DISABLED${COLOR_RESET} %-20s (uninitialized)\n" "$mod"
         fi
