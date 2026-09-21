@@ -76,10 +76,12 @@ cmd_list() {
     local COLOR_GREEN='\e[32m'
     local COLOR_RED='\e[31m'
     local COLOR_RESET='\e[0m'
+    local COLOR_DIM='\e[2m'
     if [ -n "${NO_COLOR:-}" ]; then
         COLOR_GREEN=''
         COLOR_RED=''
         COLOR_RESET=''
+        COLOR_DIM=''
     fi
 
     # Optimize: pre-fetch status of all submodules once
@@ -96,9 +98,16 @@ cmd_list() {
             # Extract commit hash from the line, preserving any + or U prefixes as in original script
             local commit_hash
             commit_hash=$(echo "$mod_line" | awk '{print $1}')
-            printf "  ${COLOR_GREEN}● ENABLED ${COLOR_RESET} %-20s (%s)\n" "$mod" "$commit_hash"
+            local prefix=""
+            local hash_val="$commit_hash"
+            if [[ "$commit_hash" =~ ^[-+U] ]]; then
+                prefix="${BASH_REMATCH[0]}"
+                hash_val="${commit_hash:1}"
+            fi
+            local display_hash="${prefix}${hash_val:0:7}"
+            printf "  ${COLOR_GREEN}● ENABLED ${COLOR_RESET} %-20s ${COLOR_DIM}(%s)${COLOR_RESET}\n" "$mod" "$display_hash"
         else
-            printf "  ${COLOR_RED}○ DISABLED${COLOR_RESET} %-20s (uninitialized)\n" "$mod"
+            printf "  ${COLOR_RED}○ DISABLED${COLOR_RESET} %-20s ${COLOR_DIM}(uninitialized)${COLOR_RESET}\n" "$mod"
         fi
     done
     echo ""
