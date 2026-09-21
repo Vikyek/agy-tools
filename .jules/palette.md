@@ -9,3 +9,7 @@
 ## 2026-09-08 - Respecting NO_COLOR Standard in CLI
 **Learning:** Terminal utilities that use ANSI escape codes for semantic formatting (like green for enabled, red for disabled) must provide a way to disable color output. This ensures accessibility for users with color vision deficiency or environments that don't support color rendering.
 **Action:** Always check the `NO_COLOR` environment variable before applying ANSI escape codes in CLI tools.
+
+## 2024-05-20 - Truncate and Dim Long Hashes in Terminals
+**Learning:** Printing long 40-character commit hashes in terminal output creates visual noise and disrupts visual hierarchy.
+**Action:** Truncate long metadata strings (like commit hashes to 7 chars) and apply a dim terminal color (`\e[2m`) to reduce cognitive load and visual noise while preserving functional value.
