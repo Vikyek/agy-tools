@@ -9,3 +9,7 @@
 ## 2026-09-08 - Respecting NO_COLOR Standard in CLI
 **Learning:** Terminal utilities that use ANSI escape codes for semantic formatting (like green for enabled, red for disabled) must provide a way to disable color output. This ensures accessibility for users with color vision deficiency or environments that don't support color rendering.
 **Action:** Always check the `NO_COLOR` environment variable before applying ANSI escape codes in CLI tools.
+
+## 2024-05-23 - Submodule Status Dimming
+**Learning:** Long commit hashes and auxiliary information (like "(uninitialized)") in TUI lists create visual noise.
+**Action:** Truncate hashes (e.g. to 7 chars) and apply dim coloring (\e[2m) to auxiliary text to maintain visual hierarchy.
