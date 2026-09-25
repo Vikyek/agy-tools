@@ -5,7 +5,7 @@ pkgrel=1
 pkgdesc="Vikyek's Rogue Agent Singularity — Suite of autonomous multi-agent tools, orchestrators, and plugins for Antigravity (AGY)"
 arch=('any')
 url="https://github.com/Vikyek/rogue-agent-singularity"
-license=('MIT')
+license=('LicenseRef-MIT')
 depends=('python' 'bash')
 makedepends=('git' 'make')
 optdepends=(
@@ -35,4 +35,5 @@ package() {
     cd "$pkgname"
     export GIT_CEILING_DIRECTORIES="$srcdir"
     make install DESTDIR="$pkgdir" PREFIX=/usr
+    install -Dm644 LICENSE "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
 }
