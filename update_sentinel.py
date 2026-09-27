@@ -11,6 +11,6 @@ new_entry = """
 **Prevention:** Always use `--` in subprocess calls to explicitly denote the end of options and the beginning of positional arguments (e.g. `subprocess.run(["gh", "pr", "view", "--json", "comments,reviews", "--", str(number)])`).
 """
 
-if "2026-09-27" not in content:
+if "## 2026-09-27 - Prevent command injection in gh pr commands" not in content:
     with open(filepath, "a") as f:
         f.write(new_entry)
