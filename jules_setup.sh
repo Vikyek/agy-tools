@@ -65,8 +65,12 @@ if [ -d "$SCRIPT_DIR/patches" ]; then
             info "Applying $patch_name..."
 
             # Apply jules_listener_injection.patch to agv-dispatcher/modules/jules-vanager submodule
-            if [[ "$patch_name" == "jules_listener_injection.patch" || "$patch_name" == jules-tui-*.patch || "$patch_name" == "jules_manager.patch" ]]; then
-                (cd "$SCRIPT_DIR/agv-dispatcher/modules/jules-vanager" && patch -p1 --forward < "$patch_file" || info "Patch $patch_name might already be applied.")
+            if [[ "$patch_name" == "jules_listener_injection.patch" || "$patch_name" == "jules_listener_gh_injection.patch" || "$patch_name" == jules-tui-*.patch || "$patch_name" == "jules_manager.patch" ]]; then
+                if (cd "$SCRIPT_DIR/agv-dispatcher/modules/jules-vanager" && patch -p1 --reverse --dry-run < "$patch_file" >/dev/null 2>&1); then
+                    info "Patch $patch_name might already be applied."
+                else
+                    (cd "$SCRIPT_DIR/agv-dispatcher/modules/jules-vanager" && patch -p1 --forward < "$patch_file") || { error "Failed to apply $patch_name"; return 1 2>/dev/null || exit 1; }
+                fi
             fi
 
             # Apply toon_mcp_perf.patch to toon-mcp submodule
