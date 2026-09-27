@@ -6,7 +6,7 @@ pkgdesc="Vikyek's Rogue Agent Singularity — Suite of autonomous multi-agent to
 arch=('any')
 url="https://github.com/Vikyek/rogue-agent-singularity"
 license=('MIT')
-depends=('python' 'bash')
+depends=('python')
 makedepends=('git' 'make')
 optdepends=(
     'agv-dispatcher: Token-efficient task dispatcher & self-scaling orchestrator'
@@ -35,4 +35,5 @@ package() {
     cd "$pkgname"
     export GIT_CEILING_DIRECTORIES="$srcdir"
     make install DESTDIR="$pkgdir" PREFIX=/usr
+    install -Dm644 LICENSE "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
 }
