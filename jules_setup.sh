@@ -15,9 +15,32 @@ else
     C_RST=''
 fi
 
+# /**
+#  * Prints an informational message to stdout.
+#  *
+#  * @param $1 - The message to print.
+#  */
 info() { echo -e "${C_INFO}[INFO]${C_RST} $1"; }
+
+# /**
+#  * Prints a warning message to stderr.
+#  *
+#  * @param $1 - The warning message to print.
+#  */
 warn() { echo -e "${C_WARN}[WARN]${C_RST} $1" >&2; }
+
+# /**
+#  * Prints an error message to stderr.
+#  *
+#  * @param $1 - The error message to print.
+#  */
 error() { echo -e "${C_ERR}[ERROR]${C_RST} $1" >&2; }
+
+# /**
+#  * Prints a success message to stdout.
+#  *
+#  * @param $1 - The success message to print.
+#  */
 success() { echo -e "${C_OK}[SUCCESS]${C_RST} $1"; }
 
 # Determine repository directory and change to it
@@ -65,12 +88,16 @@ if [ -d "$SCRIPT_DIR/patches" ]; then
             info "Applying $patch_name..."
 
             # Apply jules_listener_injection.patch to agv-dispatcher/modules/jules-vanager submodule
-            if [[ "$patch_name" == "jules_listener_injection.patch" || "$patch_name" == jules-tui-*.patch || "$patch_name" == "jules_manager.patch" ]]; then
-                (cd "$SCRIPT_DIR/agv-dispatcher/modules/jules-vanager" && patch -p1 --forward < "$patch_file" || info "Patch $patch_name might already be applied.")
+            if [[ "$patch_name" == "jules_listener_injection.patch" || "$patch_name" == "jules_listener_gh_injection.patch" || "$patch_name" == jules-tui-*.patch || "$patch_name" == "jules_manager.patch" ]]; then
+                if (cd "$SCRIPT_DIR/agv-dispatcher/modules/jules-vanager" && patch -p1 --reverse --dry-run < "$patch_file" >/dev/null 2>&1); then
+                    info "Patch $patch_name might already be applied."
+                else
+                    (cd "$SCRIPT_DIR/agv-dispatcher/modules/jules-vanager" && patch -p1 --forward < "$patch_file") || { error "Failed to apply $patch_name"; return 1 2>/dev/null || exit 1; }
+                fi
             fi
 
             # Apply toon_mcp_perf.patch to toon-mcp submodule
-            if [[ "$patch_name" == "toon_mcp_perf.patch" ]]; then
+            if [[ "$patch_name" == "toon_mcp_perf.patch" || "$patch_name" == "toon_mcp_perf_iteration.patch" ]]; then
                 (cd "$SCRIPT_DIR/toon-mcp" && {
                     if git apply --check --reverse "$patch_file" >/dev/null 2>&1; then
                         info "Patch $patch_name might already be applied."
