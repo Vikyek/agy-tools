@@ -17,3 +17,8 @@
 **Vulnerability:** A command injection vulnerability existed where `subprocess.run(["git", "rebase", "origin/main", branch])` (and `merge`, `push`) allowed option injection if a branch name started with a dash.
 **Learning:** `git` and other CLI tools can interpret arguments that start with `-` as options rather than positional arguments. A previous patch only mitigated this for `git branch -d` and `git push --delete`.
 **Prevention:** Always use `--` in subprocess calls to explicitly denote the end of options and the beginning of positional arguments for all git commands taking arbitrary branch names (e.g. `subprocess.run(["git", "rebase", "origin/main", "--", branch])`).
+
+## 2026-09-27 - Prevent command injection in gh pr commands
+**Vulnerability:** A command injection vulnerability existed where `subprocess.run(["gh", "pr", "view", str(number), ...])` and `subprocess.run(["gh", "pr", "merge", str(number), ...])` allowed option injection if a PR number/branch string started with a dash.
+**Learning:** `gh` and other CLI tools can interpret arguments that start with `-` as options rather than positional arguments.
+**Prevention:** Always use `--` in subprocess calls to explicitly denote the end of options and the beginning of positional arguments (e.g. `subprocess.run(["gh", "pr", "view", "--json", "comments,reviews", "--", str(number)])`).
