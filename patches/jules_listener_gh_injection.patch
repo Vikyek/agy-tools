@@ -1,0 +1,34 @@
+From d356bc9962c83f79f38f7a3f0197742234313f7b Mon Sep 17 00:00:00 2001
+From: "google-labs-jules[bot]"
+ <161369871+google-labs-jules[bot]@users.noreply.github.com>
+Date: Sun, 27 Sep 2026 05:55:08 +0000
+Subject: [PATCH] Fix gh command injection in Jules Listener
+
+---
+ jules_listener.py | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/jules_listener.py b/jules_listener.py
+index 32b4f56..03d3b1b 100755
+--- a/jules_listener.py
++++ b/jules_listener.py
+@@ -106,7 +106,7 @@ def check_and_handle_jules_prs(repo_path):
+             or any(char.isdigit() for char in branch.split("-")[-1]) and len(branch.split("-")[-1]) >= 15
+         )
+         if is_jules:
+-            comments_res = subprocess.run(["gh", "pr", "view", str(number), "--json", "comments,reviews"], cwd=repo_path, capture_output=True, text=True)
++            comments_res = subprocess.run(["gh", "pr", "view", "--json", "comments,reviews", "--", str(number)], cwd=repo_path, capture_output=True, text=True)
+             has_review_issues = False
+             review_feedback = ""
+             if comments_res.returncode == 0:
+@@ -137,7 +137,7 @@ def check_and_handle_jules_prs(repo_path):
+                     syntax_clean = False
+
+             if syntax_clean and mergeable == "MERGEABLE" and not has_review_issues:
+-                merge_cmd = ["gh", "pr", "merge", str(number), "--merge"]
++                merge_cmd = ["gh", "pr", "merge", "--merge", "--", str(number)]
+                 m_res = subprocess.run(merge_cmd, cwd=repo_path, capture_output=True, text=True)
+                 merged = m_res.returncode == 0
+             else:
+--
+2.53.0
