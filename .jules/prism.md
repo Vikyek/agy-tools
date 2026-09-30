@@ -12,4 +12,4 @@
 
 ## 2025-09-29 - Visual Hierarchy for State Changes
 **Learning:** Repetitive state-change actions (like enable/disable loops) are hard to scan as plain text. Combining semantic colors (e.g., green for start, red for stop) with standard iconography (▶, ■) and bolded target variables drastically improves visual hierarchy.
-**Action:** Enhance loops iterating over state changes with `echo -e "${COLOR_GREEN}▶${COLOR_RESET} Activating ${COLOR_BOLD}${var}${COLOR_RESET}..."` patterns. Always initialize color variables within a proper `[[ -z "${NO_COLOR:-}" ]]` check.
+**Action:** Enhance loops iterating over state changes with `echo -e "${COLOR_GREEN}▶${COLOR_RESET} Activating ${COLOR_BOLD}${var}${COLOR_RESET}..."` patterns. Always initialize color variables within a proper `[[ ! -v NO_COLOR ]]` check.
