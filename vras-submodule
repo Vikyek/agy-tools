@@ -53,7 +53,7 @@ is_enabled() {
     local status="${2:-}"
 
     if [ -z "$status" ]; then
-        status=$(git submodule status -- "$mod" 2>/dev/null || echo "-")
+        status=$(git submodule status "$mod" 2>/dev/null || echo "-")
     fi
 
     if [[ "$status" =~ ^- ]]; then
