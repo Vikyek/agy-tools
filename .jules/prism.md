@@ -9,3 +9,7 @@
 ## 2025-05-15 - Highlighting Dynamic Variables in Setup Scripts
 **Learning:** Static log strings in setup scripts become much easier to read when dynamic variables like file paths, patch names, and package names are highlighted with bold text. Furthermore, Bash `NO_COLOR` compliance should be checked with `[[ -z "${NO_COLOR:-}" ]]` to ensure colors are active when `NO_COLOR` is absent, as opposed to testing for its presence with `-v`.
 **Action:** Use an explicit `C_BOLD=\033[1m` sequence (reset with `C_RST`) to highlight variables or paths inside informational outputs, and always ensure `NO_COLOR` logic defaults to enabled colors when the variable is unset.
+
+## 2025-05-18 - Symbols and bold dynamic variables for status changes
+**Learning:** When making repetitive state-change actions like enable/disable modules, adding standard iconography (like ▶ or ■) combined with semantic colors (green or red) and bolding the dynamic target variable improves scannability significantly.
+**Action:** Improve visual hierarchy using semantic colors, standard iconography, and bold target variables for simple repetitive actions, taking care to respect the NO_COLOR fallback.
