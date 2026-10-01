@@ -10,6 +10,3 @@ rogue-agent-singularity/
 jules-vanager/
 agv-syncengine/
 *.pkg.tar.*
-namcap_build/
-__pycache__/
-*.pyc
