@@ -53,7 +53,7 @@ is_enabled() {
     local status="${2:-}"
 
     if [ -z "$status" ]; then
-        status=$(git submodule status -- "$mod" 2>/dev/null || echo "-")
+        status=$(git submodule status "$mod" 2>/dev/null || echo "-")
     fi
 
     if [[ "$status" =~ ^- ]]; then
@@ -73,15 +73,17 @@ cmd_list() {
     echo "🌌 Vikyek's Rogue Agent Singularity — Submodules:"
     echo ""
 
-    local COLOR_GREEN='\e[32m'
-    local COLOR_RED='\e[31m'
-    local COLOR_DIM='\e[2m'
-    local COLOR_RESET='\e[0m'
-    if [ -n "${NO_COLOR:-}" ]; then
-        COLOR_GREEN=''
-        COLOR_RED=''
-        COLOR_DIM=''
-        COLOR_RESET=''
+    local COLOR_GREEN=''
+    local COLOR_RED=''
+    local COLOR_DIM=''
+    local COLOR_BOLD=''
+    local COLOR_RESET=''
+    if [[ -z "${NO_COLOR:-}" ]]; then
+        COLOR_GREEN='\e[32m'
+        COLOR_RED='\e[31m'
+        COLOR_DIM='\e[2m'
+        COLOR_BOLD='\e[1m'
+        COLOR_RESET='\e[0m'
     fi
 
     # Optimize: pre-fetch status of all submodules once
@@ -119,15 +121,24 @@ cmd_list() {
 #  * @returns 0 on success.
 #  */
 cmd_enable() {
+    local COLOR_GREEN='\e[32m'
+    local COLOR_BOLD='\e[1m'
+    local COLOR_RESET='\e[0m'
+    if [[ -n "${NO_COLOR:-}" ]]; then
+        COLOR_GREEN=''
+        COLOR_BOLD=''
+        COLOR_RESET=''
+    fi
+
     local target="${1:-all}"
     if [ "$target" = "all" ]; then
         for mod in "${ALL_MODULES[@]}"; do
-            echo "Activating $mod..."
+            echo -e "${COLOR_GREEN}▶${COLOR_RESET} Activating ${COLOR_BOLD}${mod}${COLOR_RESET}..."
             git submodule update --init --recursive -- "$mod"
         done
     else
         local mod="${MODULES[$target]:-$target}"
-        echo "Activating $mod..."
+        echo -e "${COLOR_GREEN}▶${COLOR_RESET} Activating ${COLOR_BOLD}${mod}${COLOR_RESET}..."
         git submodule update --init --recursive -- "$mod"
     fi
     cmd_list
@@ -140,15 +151,24 @@ cmd_enable() {
 #  * @returns 0 on success.
 #  */
 cmd_disable() {
+    local COLOR_RED='\e[31m'
+    local COLOR_BOLD='\e[1m'
+    local COLOR_RESET='\e[0m'
+    if [[ -n "${NO_COLOR:-}" ]]; then
+        COLOR_RED=''
+        COLOR_BOLD=''
+        COLOR_RESET=''
+    fi
+
     local target="${1:-all}"
     if [ "$target" = "all" ]; then
         for mod in "${ALL_MODULES[@]}"; do
-            echo "Deactivating $mod..."
+            echo -e "${COLOR_RED}■${COLOR_RESET} Deactivating ${COLOR_BOLD}${mod}${COLOR_RESET}..."
             git submodule deinit -f -- "$mod" 2>/dev/null || true
         done
     else
         local mod="${MODULES[$target]:-$target}"
-        echo "Deactivating $mod..."
+        echo -e "${COLOR_RED}■${COLOR_RESET} Deactivating ${COLOR_BOLD}${mod}${COLOR_RESET}..."
         git submodule deinit -f -- "$mod"
     fi
     cmd_list
