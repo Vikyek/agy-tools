@@ -13,3 +13,6 @@
 ## 2025-05-18 - Symbols and bold dynamic variables for status changes
 **Learning:** When making repetitive state-change actions like enable/disable modules, adding standard iconography (like ▶ or ■) combined with semantic colors (green or red) and bolding the dynamic target variable improves scannability significantly.
 **Action:** Improve visual hierarchy using semantic colors, standard iconography, and bold target variables for simple repetitive actions, taking care to respect the NO_COLOR fallback.
+## 2025-09-29 - Visual Hierarchy for State Changes
+**Learning:** Repetitive state-change actions (like enable/disable loops) are hard to scan as plain text. Combining semantic colors (e.g., green for start, red for stop) with standard iconography (▶, ■) and bolded target variables drastically improves visual hierarchy.
+**Action:** Enhance loops iterating over state changes with `echo -e "${COLOR_GREEN}▶${COLOR_RESET} Activating ${COLOR_BOLD}${var}${COLOR_RESET}..."` patterns. Always initialize color variables within a proper `[[ -z "${NO_COLOR:-}" ]]` check.

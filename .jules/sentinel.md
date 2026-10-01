@@ -22,8 +22,3 @@
 **Vulnerability:** A command injection vulnerability existed where `subprocess.run(["gh", "pr", "view", str(number), ...])` and `subprocess.run(["gh", "pr", "merge", str(number), ...])` allowed option injection if a PR number/branch string started with a dash.
 **Learning:** `gh` and other CLI tools can interpret arguments that start with `-` as options rather than positional arguments.
 **Prevention:** Always use `--` in subprocess calls to explicitly denote the end of options and the beginning of positional arguments (e.g. `subprocess.run(["gh", "pr", "view", "--json", "comments,reviews", "--", str(number)])`).
-
-## 2025-10-25 - Prevent command injection in git submodule via bash scripts
-**Vulnerability:** A Git option injection vulnerability existed in vras-submodule where git submodule deinit allowed option injection if a module name started with a dash.
-**Learning:** Bash scripts executing git with dynamically generated inputs are vulnerable to Git option injection. Quoting protects shell metacharacters from shell interpretation.
-**Prevention:** Always insert -- before positional arguments in bash scripts executing git commands (e.g., git submodule deinit -f -- "$mod").
