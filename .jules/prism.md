@@ -12,4 +12,4 @@
 
 ## 2026-09-28 - Enhancing Shell Action Visibility
 **Learning:** Standard text for repetitive actions (e.g., `Activating agv-dispatcher...`) blends together during fast terminal output.
-**Action:** Use global color variables (e.g., \e[32m for success, \e[31m for teardown, and \e[1m for variable highlights) combined with clear iconography (▶ for start/enable, ■ for stop/disable) to create an immediate visual hierarchy. Ensure color variables are defined globally and disabled when `NO_COLOR` is present.
+**Action:** Use global color variables (e.g., \e[32m for success, \e[31m for teardown, and \e[1m for variable highlights) combined with clear iconography (▶ for start/enable, ■ for stop/disable) to create an immediate visual hierarchy. Ensure color variables are defined globally and disabled when `[[ -v NO_COLOR ]]` is true.
