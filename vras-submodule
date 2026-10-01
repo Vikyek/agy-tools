@@ -122,7 +122,7 @@ cmd_enable() {
     local COLOR_GREEN='\e[32m'
     local COLOR_BOLD='\e[1m'
     local COLOR_RESET='\e[0m'
-    if [ -n "${NO_COLOR:-}" ]; then
+    if [[ -n "${NO_COLOR:-}" ]]; then
         COLOR_GREEN=''
         COLOR_BOLD=''
         COLOR_RESET=''
@@ -152,7 +152,7 @@ cmd_disable() {
     local COLOR_RED='\e[31m'
     local COLOR_BOLD='\e[1m'
     local COLOR_RESET='\e[0m'
-    if [ -n "${NO_COLOR:-}" ]; then
+    if [[ -n "${NO_COLOR:-}" ]]; then
         COLOR_RED=''
         COLOR_BOLD=''
         COLOR_RESET=''
