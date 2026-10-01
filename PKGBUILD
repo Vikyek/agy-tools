@@ -35,7 +35,7 @@ prepare() {
 }
 
 # /**
-#  * Installs the package components into the pkgdir, skipping network requests.
+#  * Installs the package components into the pkgdir, relying on already-fetched submodules.
 #  */
 package() {
     cd "$pkgname"
