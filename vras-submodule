@@ -127,12 +127,12 @@ cmd_enable() {
     if [ "$target" = "all" ]; then
         for mod in "${ALL_MODULES[@]}"; do
             echo -e "${COLOR_GREEN}▶ Activating${COLOR_RESET} ${COLOR_BOLD}${mod}${COLOR_RESET}..."
-            git submodule update --init --recursive "$mod"
+            git submodule update --init --recursive -- "$mod"
         done
     else
         local mod="${MODULES[$target]:-$target}"
         echo -e "${COLOR_GREEN}▶ Activating${COLOR_RESET} ${COLOR_BOLD}${mod}${COLOR_RESET}..."
-        git submodule update --init --recursive "$mod"
+        git submodule update --init --recursive -- "$mod"
     fi
     cmd_list
 }
@@ -148,12 +148,12 @@ cmd_disable() {
     if [ "$target" = "all" ]; then
         for mod in "${ALL_MODULES[@]}"; do
             echo -e "${COLOR_RED}■ Deactivating${COLOR_RESET} ${COLOR_BOLD}${mod}${COLOR_RESET}..."
-            git submodule deinit -f "$mod" 2>/dev/null || true
+            git submodule deinit -f -- "$mod" 2>/dev/null || true
         done
     else
         local mod="${MODULES[$target]:-$target}"
         echo -e "${COLOR_RED}■ Deactivating${COLOR_RESET} ${COLOR_BOLD}${mod}${COLOR_RESET}..."
-        git submodule deinit -f "$mod"
+        git submodule deinit -f -- "$mod"
     fi
     cmd_list
 }
