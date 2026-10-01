@@ -23,7 +23,7 @@
 **Learning:** `gh` and other CLI tools can interpret arguments that start with `-` as options rather than positional arguments.
 **Prevention:** Always use `--` in subprocess calls to explicitly denote the end of options and the beginning of positional arguments (e.g. `subprocess.run(["gh", "pr", "view", "--json", "comments,reviews", "--", str(number)])`).
 
-## 2024-10-24 - Prevent option injection in bash git commands
-**Vulnerability:** A command option injection existed where `vras-submodule` passed user-supplied variables directly to `git submodule` commands, allowing options like `-q` or `--all` to be executed.
-**Learning:** Just like with `subprocess.run` in Python, bash scripts must use `--` to separate positional arguments from command options when passing dynamic variables to CLI tools.
-**Prevention:** Always use `--` before positional arguments in shell scripts (e.g. `git submodule deinit -f -- "$mod"`).
+## 2025-10-25 - Prevent command injection in git submodule via bash scripts
+**Vulnerability:** A Git option injection vulnerability existed in vras-submodule where git submodule deinit allowed option injection if a module name started with a dash.
+**Learning:** Bash scripts executing git with dynamically generated inputs are vulnerable to Git option injection. Quoting protects shell metacharacters from shell interpretation.
+**Prevention:** Always insert -- before positional arguments in bash scripts executing git commands (e.g., git submodule deinit -f -- "$mod").
