@@ -3,4 +3,4 @@
 **Action:** Apply structured JSDoc-style docblocks prefixed with `# ` to shell functions to maintain consistent inline clarity.
 ## 2026-09-29 - Standardize Python Docblocks
 **Learning:** Some Python files like `jules_manager.py` used inconsistent Google-style docstrings instead of the repo convention.
-**Action:** Standardized Python docstrings to use `@param` and `@returns` tags for inline clarity.
+**Action:** Recorded the recommendation for Python docstrings to use `@param` and `@returns` tags for inline clarity.
