@@ -81,36 +81,6 @@ export JULES_SESSION_ID="${JULES_SESSION_ID:-17849353354405986700}"
 info "Initializing submodules..."
 git submodule update --init --recursive || { error "Failed to initialize submodules"; return 1 2>/dev/null || exit 1; }
 
-# Apply patches to submodules where we cannot advance upstream pointers
-if [ -d "$SCRIPT_DIR/patches" ]; then
-    info "Applying patches..."
-    for patch_file in "$SCRIPT_DIR"/patches/*.patch; do
-        if [ -f "$patch_file" ]; then
-            patch_name=$(basename "$patch_file")
-            info "Applying ${C_BOLD}$patch_name${C_RST}..."
-
-            # Apply jules_listener_injection.patch to agv-dispatcher/modules/jules-vanager submodule
-            if [[ "$patch_name" == "jules_listener_injection.patch" || "$patch_name" == "jules_listener_gh_injection.patch" || "$patch_name" == jules-tui-*.patch || "$patch_name" == "jules_manager.patch" ]]; then
-                if (cd "$SCRIPT_DIR/agv-dispatcher/modules/jules-vanager" && patch -p1 --reverse --dry-run < "$patch_file" >/dev/null 2>&1); then
-                    info "Patch ${C_BOLD}$patch_name${C_RST} might already be applied."
-                else
-                    (cd "$SCRIPT_DIR/agv-dispatcher/modules/jules-vanager" && patch -p1 --forward < "$patch_file") || { error "Failed to apply ${C_BOLD}$patch_name${C_RST}"; return 1 2>/dev/null || exit 1; }
-                fi
-            fi
-
-            # Apply toon_mcp_perf.patch to toon-mcp submodule
-            if [[ "$patch_name" == "toon-mcp-optimization.patch" || ( ( "$patch_name" == "toon_mcp_perf.patch" || "$patch_name" == "toon_mcp_perf_iteration.patch" ) && ! -f "$SCRIPT_DIR/patches/toon-mcp-optimization.patch" ) ]]; then
-                (cd "$SCRIPT_DIR/toon-mcp" && {
-                    if git apply --check --reverse "$patch_file" >/dev/null 2>&1; then
-                        info "Patch ${C_BOLD}$patch_name${C_RST} might already be applied."
-                    else
-                        git apply "$patch_file" || { error "Failed to apply ${C_BOLD}$patch_name${C_RST}"; return 1 2>/dev/null || exit 1; }
-                    fi
-                })
-            fi
-        fi
-    done
-fi
 
 VENV_DIR="${HOME}/.local/share/toon-venv"
 if [ ! -d "$VENV_DIR" ]; then
