@@ -93,15 +93,20 @@ cmd_list() {
     all_status=$(git submodule status 2>/dev/null || true)
 
     for mod in "${ALL_MODULES[@]}"; do
-        # Extract the line for this specific module from the pre-fetched status
-        local mod_line
-        mod_line=$(echo "$all_status" | grep -E "[[:space:]]$mod([[:space:]]|$)" || echo "-")
+        local mod_line="-"
+        # Use native bash while-read loop to find the module line, avoiding subshells and supporting Bash 3.2
+        while IFS= read -r line; do
+            if [[ "$line" =~ [[:space:]]$mod([[:space:]]|$) ]]; then
+                mod_line="$line"
+                break
+            fi
+        done <<< "$all_status"
 
         # Pass the extracted line to is_enabled to avoid a redundant git call
         if is_enabled "$mod" "$mod_line"; then
-            # Extract commit hash from the line, preserving any + or U prefixes as in original script
+            # Extract commit hash natively using parameter expansion and read
             local commit_hash
-            commit_hash=$(echo "$mod_line" | awk '{print $1}')
+            read -r commit_hash _ <<< "$mod_line"
             local prefix=""
             if [[ "$commit_hash" =~ ^[-+U] ]]; then
                 prefix="${BASH_REMATCH[0]}"
