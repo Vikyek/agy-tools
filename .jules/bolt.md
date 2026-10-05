@@ -27,8 +27,8 @@
 **Learning:** Generating sets out of Python dictionary keys and doing recursive python tree traversals is extremely slow. Dictionaries natively evaluate key equality very fast with `item.keys() == first_keys` and bulk add counts using `Counter.update()` without creating new memory or nested frames.
 **Action:** When validating dictionary arrays or counting key frequencies in deep structures, always use `dict_keys` comparison fast paths, and `Counter.update()` coupled with iterative stack traversals rather than mapping to sets or using recursion.
 ## 2026-10-06 - Batch bash operations to avoid subshells in loops
-**Learning:** Spawning processes like `grep` and `awk` within a loop over an array in Bash causes massive performance degradation due to subshell overhead. Parsing pre-fetched string data into a native bash associative array using `read` is orders of magnitude faster.
-**Action:** Use native bash associative arrays and string manipulation for O(1) lookups inside loops instead of creating subshells and piping text.
+**Learning:** The implementation scans the pre-fetched status output once per module using a native bash `while read` loop. This avoids spawning external `grep` and `awk` processes inside the loop, but does not provide O(1) lookups.
+**Action:** Use a native bash `while read` loop and string manipulation to scan the status output for each module, rather than creating subshells and piping text to external utilities like `grep` or `awk`.
 ## 2026-10-06 - Batch bash operations to avoid subshells in loops
 **Learning:** Spawning processes like `grep` and `awk` within a loop over an array in Bash causes massive performance degradation due to subshell overhead. Parsing pre-fetched string data into a native bash `while read` loop or using native parameter expansion is orders of magnitude faster.
 **Action:** Use native bash while-read loops and string manipulation inside loops instead of creating subshells and piping text to external utilities like grep or awk.
