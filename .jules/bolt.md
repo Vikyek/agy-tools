@@ -29,6 +29,3 @@
 ## 2026-10-06 - Batch bash operations to avoid subshells in loops
 **Learning:** The implementation scans the pre-fetched status output once per module using a native bash `while read` loop. This avoids spawning external `grep` and `awk` processes inside the loop, but does not provide O(1) lookups.
 **Action:** Use a native bash `while read` loop and string manipulation to scan the status output for each module, rather than creating subshells and piping text to external utilities like `grep` or `awk`.
-## 2026-10-06 - Batch bash operations to avoid subshells in loops
-**Learning:** Spawning processes like `grep` and `awk` within a loop over an array in Bash causes massive performance degradation due to subshell overhead. Parsing pre-fetched string data into a native bash `while read` loop or using native parameter expansion is orders of magnitude faster.
-**Action:** Use native bash while-read loops and string manipulation inside loops instead of creating subshells and piping text to external utilities like grep or awk.
