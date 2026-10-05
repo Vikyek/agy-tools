@@ -23,3 +23,9 @@
 ## 2026-09-27 - Optimize Array Comprehension and Recursion Overhead
 **Learning:** Generating sets out of Python dictionary keys and doing recursive python tree traversals when calculating dictionary frequencies is extremely slow and causes excessive allocations. Dictionaries natively evaluate key equality very fast with `item.keys() == first_keys` and bulk add counts to collections using `Counter.update()` without creating new memory or nested function frames.
 **Action:** When validating dictionary arrays or counting key frequencies in deep structures, always use `dict_keys` comparison fast paths, and `Counter.update()` coupled with iterative stack traversals rather than mapping to sets or using recursion.
+## 2026-09-28 - Optimize Dictionary Key Fast Paths
+**Learning:** Generating sets out of Python dictionary keys and doing recursive python tree traversals is extremely slow. Dictionaries natively evaluate key equality very fast with `item.keys() == first_keys` and bulk add counts using `Counter.update()` without creating new memory or nested frames.
+**Action:** When validating dictionary arrays or counting key frequencies in deep structures, always use `dict_keys` comparison fast paths, and `Counter.update()` coupled with iterative stack traversals rather than mapping to sets or using recursion.
+## 2026-10-06 - Batch bash operations to avoid subshells in loops
+**Learning:** The implementation scans the pre-fetched status output once per module using a native bash `while read` loop. This avoids spawning external `grep` and `awk` processes inside the loop, but does not provide O(1) lookups.
+**Action:** Use a native bash `while read` loop and string manipulation to scan the status output for each module, rather than creating subshells and piping text to external utilities like `grep` or `awk`.
