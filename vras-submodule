@@ -75,10 +75,12 @@ cmd_list() {
 
     local COLOR_GREEN='\e[32m'
     local COLOR_RED='\e[31m'
+    local COLOR_DIM='\e[2m'
     local COLOR_RESET='\e[0m'
     if [ -n "${NO_COLOR:-}" ]; then
         COLOR_GREEN=''
         COLOR_RED=''
+        COLOR_DIM=''
         COLOR_RESET=''
     fi
 
@@ -122,15 +124,23 @@ cmd_list() {
 #  * @returns 0 on success.
 #  */
 cmd_enable() {
+    local COLOR_GREEN='\e[32m'
+    local COLOR_BOLD='\e[1m'
+    local COLOR_RESET='\e[0m'
+    if [ -n "${NO_COLOR:-}" ]; then
+        COLOR_GREEN=''
+        COLOR_BOLD=''
+        COLOR_RESET=''
+    fi
     local target="${1:-all}"
     if [ "$target" = "all" ]; then
         for mod in "${ALL_MODULES[@]}"; do
-            echo "Activating $mod..."
+            echo -e "${COLOR_GREEN}▶${COLOR_RESET} Activating ${COLOR_BOLD}$mod${COLOR_RESET}..."
             git submodule update --init --recursive "$mod"
         done
     else
         local mod="${MODULES[$target]:-$target}"
-        echo "Activating $mod..."
+        echo -e "${COLOR_GREEN}▶${COLOR_RESET} Activating ${COLOR_BOLD}$mod${COLOR_RESET}..."
         git submodule update --init --recursive "$mod"
     fi
     cmd_list
@@ -143,15 +153,23 @@ cmd_enable() {
 #  * @returns 0 on success.
 #  */
 cmd_disable() {
+    local COLOR_RED='\e[31m'
+    local COLOR_BOLD='\e[1m'
+    local COLOR_RESET='\e[0m'
+    if [ -n "${NO_COLOR:-}" ]; then
+        COLOR_RED=''
+        COLOR_BOLD=''
+        COLOR_RESET=''
+    fi
     local target="${1:-all}"
     if [ "$target" = "all" ]; then
         for mod in "${ALL_MODULES[@]}"; do
-            echo "Deactivating $mod..."
+            echo -e "${COLOR_RED}■${COLOR_RESET} Deactivating ${COLOR_BOLD}$mod${COLOR_RESET}..."
             git submodule deinit -f "$mod" 2>/dev/null || true
         done
     else
         local mod="${MODULES[$target]:-$target}"
-        echo "Deactivating $mod..."
+        echo -e "${COLOR_RED}■${COLOR_RESET} Deactivating ${COLOR_BOLD}$mod${COLOR_RESET}..."
         git submodule deinit -f "$mod"
     fi
     cmd_list
@@ -199,10 +217,10 @@ case "$ACTION" in
         echo "Usage: vras-submodule [list|enable|disable|toggle|install] [module]"
         echo ""
         echo "Commands:"
-        echo "  list                     Show status of all submodules"
-        echo "  enable, install <module|all> Enable and initialize submodule"
-        echo "  disable <module|all>     Disable and deinitialize submodule"
-        echo "  toggle  <module>         Toggle module on or off"
+        printf "  %-28s %s\n" "list" "Show status of all submodules"
+        printf "  %-28s %s\n" "enable, install <module|all>" "Enable and initialize submodule"
+        printf "  %-28s %s\n" "disable <module|all>" "Disable and deinitialize submodule"
+        printf "  %-28s %s\n" "toggle  <module>" "Toggle module on or off"
         echo ""
         echo "Modules: dispatcher, jules, sync, toon, all"
         ;;
