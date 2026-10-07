@@ -53,7 +53,7 @@ is_enabled() {
     local status="${2:-}"
 
     if [ -z "$status" ]; then
-        status=$(git submodule status "$mod" 2>/dev/null || echo "-")
+        status=$(git submodule status -- "$mod" 2>/dev/null || echo "-")
     fi
 
     if [[ "$status" =~ ^- ]]; then
@@ -107,7 +107,7 @@ cmd_list() {
                 commit_hash="${commit_hash:1}"
             fi
             local short_hash="${prefix}${commit_hash:0:7}"
-            printf "  ${COLOR_GREEN}● ENABLED ${COLOR_RESET} %-20s ${COLOR_DIM}(%s)${COLOR_RESET}\n" "$mod" "$short_hash"
+            printf "  ${COLOR_GREEN}● ENABLED ${COLOR_RESET} %-20s (%s)${COLOR_RESET}\n" "$mod" "$short_hash"
         else
             printf "  ${COLOR_RED}○ DISABLED${COLOR_RESET} %-20s (uninitialized)\n" "$mod"
         fi
@@ -126,12 +126,12 @@ cmd_enable() {
     if [ "$target" = "all" ]; then
         for mod in "${ALL_MODULES[@]}"; do
             echo "Activating $mod..."
-            git submodule update --init --recursive "$mod"
+            git submodule update --init --recursive -- "$mod"
         done
     else
         local mod="${MODULES[$target]:-$target}"
         echo "Activating $mod..."
-        git submodule update --init --recursive "$mod"
+        git submodule update --init --recursive -- "$mod"
     fi
     cmd_list
 }
@@ -147,12 +147,12 @@ cmd_disable() {
     if [ "$target" = "all" ]; then
         for mod in "${ALL_MODULES[@]}"; do
             echo "Deactivating $mod..."
-            git submodule deinit -f "$mod" 2>/dev/null || true
+            git submodule deinit -f -- "$mod" 2>/dev/null || true
         done
     else
         local mod="${MODULES[$target]:-$target}"
         echo "Deactivating $mod..."
-        git submodule deinit -f "$mod"
+        git submodule deinit -f -- "$mod"
     fi
     cmd_list
 }
