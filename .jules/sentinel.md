@@ -32,3 +32,8 @@
 **Vulnerability:** External branches and PR numbers fetched via `gh pr list --json headRefName` were fed directly into subprocess arguments. `git push` and other commands do not strictly treat `--` as an end-of-options marker for refspecs.
 **Learning:** Relying on `--` is insufficient for `git push`. A malicious refspec like `--help` or `../evil` could bypass it.
 **Prevention:** Apply strict regex-based allowlist validation (e.g., `^[A-Za-z0-9._/-]+$`, rejecting `..` and leading `-`) on all dynamically fetched strings *before* inserting them into shell commands, instead of just trying to safely format them.
+
+## 2025-03-09 - Prevent unbound variable crash in NO_COLOR environments
+**Vulnerability:** A shell script setting `set -euo pipefail` would crash if a formatting variable (like `COLOR_DIM`) was used in an output string but not initialized in all execution branches.
+**Learning:** Defensive bash scripting requires all variables to be explicitly initialized, especially when strict mode (`-u`) is enforced.
+**Prevention:** Always initialize all format/color variables to empty strings when disabling colors (e.g., `NO_COLOR`), or use default parameter expansion (`${COLOR_DIM:-}`).
