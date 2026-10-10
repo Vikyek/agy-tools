@@ -40,6 +40,19 @@ declare -A MODULES=(
 # Canonical module list
 ALL_MODULES=("agv-dispatcher" "jules-vanager" "agv-syncengine" "toon-mcp")
 
+COLOR_GREEN='\e[32m'
+COLOR_RED='\e[31m'
+COLOR_RESET='\e[0m'
+COLOR_DIM='\e[2m'
+COLOR_BOLD='\033[1m'
+if [ -n "${NO_COLOR:-}" ]; then
+    COLOR_GREEN=''
+    COLOR_RED=''
+    COLOR_RESET=''
+    COLOR_DIM=''
+    COLOR_BOLD=''
+fi
+
 # /**
 #  * Checks if a given submodule is enabled (initialized).
 #  * Respects NO_COLOR for accessible terminal output.
@@ -109,9 +122,9 @@ cmd_list() {
                 commit_hash="${commit_hash:1}"
             fi
             local short_hash="${prefix}${commit_hash:0:7}"
-            printf "  ${COLOR_GREEN}● ENABLED ${COLOR_RESET} %-20s ${COLOR_DIM}(%s)${COLOR_RESET}\n" "$mod" "$short_hash"
+            printf "  ${COLOR_GREEN}● ENABLED ${COLOR_RESET} ${COLOR_BOLD}%-20s${COLOR_RESET} ${COLOR_DIM}(%s)${COLOR_RESET}\n" "$mod" "$short_hash"
         else
-            printf "  ${COLOR_RED}○ DISABLED${COLOR_RESET} %-20s (uninitialized)\n" "$mod"
+            printf "  ${COLOR_RED}○ DISABLED${COLOR_RESET} ${COLOR_BOLD}%-20s${COLOR_RESET} (uninitialized)\n" "$mod"
         fi
     done
     echo ""
@@ -201,10 +214,10 @@ case "$ACTION" in
         echo "Usage: vras-submodule [list|enable|disable|toggle|install] [module]"
         echo ""
         echo "Commands:"
-        echo "  list                     Show status of all submodules"
-        echo "  enable, install <module|all> Enable and initialize submodule"
-        echo "  disable <module|all>     Disable and deinitialize submodule"
-        echo "  toggle  <module>         Toggle module on or off"
+        printf "  %-28s %s\n" "list" "Show status of all submodules"
+        printf "  %-28s %s\n" "enable, install <module|all>" "Enable and initialize submodule"
+        printf "  %-28s %s\n" "disable <module|all>" "Disable and deinitialize submodule"
+        printf "  %-28s %s\n" "toggle  <module>" "Toggle module on or off"
         echo ""
         echo "Modules: dispatcher, jules, sync, toon, all"
         ;;
