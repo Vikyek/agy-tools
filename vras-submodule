@@ -67,7 +67,7 @@ is_enabled() {
     local status="${2:-}"
 
     if [ -z "$status" ]; then
-        status=$(git submodule status "$mod" 2>/dev/null || echo "-")
+        status=$(git submodule status -- "$mod" 2>/dev/null || echo "-")
     fi
 
     if [[ "$status" =~ ^- ]]; then
@@ -86,6 +86,17 @@ is_enabled() {
 cmd_list() {
     echo "🌌 Vikyek's Rogue Agent Singularity — Submodules:"
     echo ""
+
+    local COLOR_GREEN='\e[32m'
+    local COLOR_RED='\e[31m'
+    local COLOR_RESET='\e[0m'
+    local COLOR_DIM='\e[2m'
+    if [ -n "${NO_COLOR:-}" ]; then
+        COLOR_GREEN=''
+        COLOR_RED=''
+        COLOR_RESET=''
+        COLOR_DIM=''
+    fi
 
     # Optimize: pre-fetch status of all submodules once
     local all_status
@@ -130,13 +141,13 @@ cmd_enable() {
     local target="${1:-all}"
     if [ "$target" = "all" ]; then
         for mod in "${ALL_MODULES[@]}"; do
-            printf "${COLOR_GREEN}▶ Activating ${COLOR_BOLD}%s${COLOR_RESET}...\n" "$mod"
-            git submodule update --init --recursive "$mod"
+            echo "Activating $mod..."
+            git submodule update --init --recursive -- "$mod"
         done
     else
         local mod="${MODULES[$target]:-$target}"
-        printf "${COLOR_GREEN}▶ Activating ${COLOR_BOLD}%s${COLOR_RESET}...\n" "$mod"
-        git submodule update --init --recursive "$mod"
+        echo "Activating $mod..."
+        git submodule update --init --recursive -- "$mod"
     fi
     cmd_list
 }
@@ -151,13 +162,13 @@ cmd_disable() {
     local target="${1:-all}"
     if [ "$target" = "all" ]; then
         for mod in "${ALL_MODULES[@]}"; do
-            printf "${COLOR_RED}■ Deactivating ${COLOR_BOLD}%s${COLOR_RESET}...\n" "$mod"
-            git submodule deinit -f "$mod" 2>/dev/null || true
+            echo "Deactivating $mod..."
+            git submodule deinit -f -- "$mod" 2>/dev/null || true
         done
     else
         local mod="${MODULES[$target]:-$target}"
-        printf "${COLOR_RED}■ Deactivating ${COLOR_BOLD}%s${COLOR_RESET}...\n" "$mod"
-        git submodule deinit -f "$mod"
+        echo "Deactivating $mod..."
+        git submodule deinit -f -- "$mod"
     fi
     cmd_list
 }
