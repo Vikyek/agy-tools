@@ -53,7 +53,7 @@ is_enabled() {
     local status="${2:-}"
 
     if [ -z "$status" ]; then
-        status=$(git submodule status "$mod" 2>/dev/null || echo "-")
+        status=$(git submodule status -- "$mod" 2>/dev/null || echo "-")
     fi
 
     if [[ "$status" =~ ^- ]]; then
@@ -75,10 +75,12 @@ cmd_list() {
 
     local COLOR_GREEN='\e[32m'
     local COLOR_RED='\e[31m'
+    local COLOR_DIM='\e[2m'
     local COLOR_RESET='\e[0m'
     if [ -n "${NO_COLOR:-}" ]; then
         COLOR_GREEN=''
         COLOR_RED=''
+        COLOR_DIM=''
         COLOR_RESET=''
     fi
 
@@ -126,12 +128,12 @@ cmd_enable() {
     if [ "$target" = "all" ]; then
         for mod in "${ALL_MODULES[@]}"; do
             echo "Activating $mod..."
-            git submodule update --init --recursive "$mod"
+            git submodule update --init --recursive -- "$mod"
         done
     else
         local mod="${MODULES[$target]:-$target}"
         echo "Activating $mod..."
-        git submodule update --init --recursive "$mod"
+        git submodule update --init --recursive -- "$mod"
     fi
     cmd_list
 }
@@ -147,12 +149,12 @@ cmd_disable() {
     if [ "$target" = "all" ]; then
         for mod in "${ALL_MODULES[@]}"; do
             echo "Deactivating $mod..."
-            git submodule deinit -f "$mod" 2>/dev/null || true
+            git submodule deinit -f -- "$mod" 2>/dev/null || true
         done
     else
         local mod="${MODULES[$target]:-$target}"
         echo "Deactivating $mod..."
-        git submodule deinit -f "$mod"
+        git submodule deinit -f -- "$mod"
     fi
     cmd_list
 }
@@ -182,6 +184,11 @@ cmd_toggle() {
 ACTION="${1:-list}"
 MODULE="${2:-}"
 
+if [[ -n "$MODULE" ]] && { [[ ! "$MODULE" =~ ^[A-Za-z0-9_/-]+$ ]] || [[ "$MODULE" =~ \.\. ]] || [[ "$MODULE" =~ ^- ]]; }; then
+    echo "ERROR: Invalid module name provided." >&2
+    exit 1
+fi
+
 case "$ACTION" in
     list|status)
         cmd_list
@@ -207,6 +214,10 @@ case "$ACTION" in
         echo "Modules: dispatcher, jules, sync, toon, all"
         ;;
     *)
+        if [[ ! "$ACTION" =~ ^[A-Za-z0-9_/-]+$ ]] || [[ "$ACTION" =~ \.\. ]] || [[ "$ACTION" =~ ^- ]]; then
+            echo "ERROR: Invalid module name provided." >&2
+            exit 1
+        fi
         cmd_toggle "$ACTION"
         ;;
 esac

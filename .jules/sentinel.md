@@ -32,3 +32,8 @@
 **Vulnerability:** External branches and PR numbers fetched via `gh pr list --json headRefName` were fed directly into subprocess arguments. `git push` and other commands do not strictly treat `--` as an end-of-options marker for refspecs.
 **Learning:** Relying on `--` is insufficient for `git push`. A malicious refspec like `--help` or `../evil` could bypass it.
 **Prevention:** Apply strict regex-based allowlist validation (e.g., `^[A-Za-z0-9._/-]+$`, rejecting `..` and leading `-`) on all dynamically fetched strings *before* inserting them into shell commands, instead of just trying to safely format them.
+
+## 2026-10-25 - Prevent Git Option Injection and Path Traversal in vras-submodule
+**Vulnerability:** The `vras-submodule` bash script allowed Git option injection via commands like `./vras-submodule enable --help` and path traversal via `./vras-submodule enable ../evil`, as it directly passed unsanitized arguments to `git submodule update` and `git submodule status` without `--` end-of-options markers and strict validation.
+**Learning:** Shell scripts using dynamically provided positional arguments in commands like `git` are prone to option injection if they aren't properly terminated with `--`. Additionally, path traversal can occur if inputs are not validated.
+**Prevention:** Always insert `--` before positional arguments in `git` shell commands. Implement strict regex-based allowlist validation (e.g., `^[A-Za-z0-9_/-]+$`, rejecting `..` and leading `-`) on inputs before processing.
