@@ -40,6 +40,19 @@ declare -A MODULES=(
 # Canonical module list
 ALL_MODULES=("agv-dispatcher" "jules-vanager" "agv-syncengine" "toon-mcp")
 
+COLOR_GREEN='\e[32m'
+COLOR_RED='\e[31m'
+COLOR_RESET='\e[0m'
+COLOR_DIM='\e[2m'
+COLOR_BOLD='\033[1m'
+if [ -n "${NO_COLOR:-}" ]; then
+    COLOR_GREEN=''
+    COLOR_RED=''
+    COLOR_RESET=''
+    COLOR_DIM=''
+    COLOR_BOLD=''
+fi
+
 # /**
 #  * Checks if a given submodule is enabled (initialized).
 #  * Respects NO_COLOR for accessible terminal output.
@@ -53,7 +66,7 @@ is_enabled() {
     local status="${2:-}"
 
     if [ -z "$status" ]; then
-        status=$(git submodule status "$mod" 2>/dev/null || echo "-")
+        status=$(git submodule status -- "$mod" 2>/dev/null || echo "-")
     fi
 
     if [[ "$status" =~ ^- ]]; then
@@ -109,9 +122,9 @@ cmd_list() {
                 commit_hash="${commit_hash:1}"
             fi
             local short_hash="${prefix}${commit_hash:0:7}"
-            printf "  ${COLOR_GREEN}● ENABLED ${COLOR_RESET} %-20s ${COLOR_DIM}(%s)${COLOR_RESET}\n" "$mod" "$short_hash"
+            printf "  ${COLOR_GREEN}● ENABLED ${COLOR_RESET} ${COLOR_BOLD}%-20s${COLOR_RESET} ${COLOR_DIM}(%s)${COLOR_RESET}\n" "$mod" "$short_hash"
         else
-            printf "  ${COLOR_RED}○ DISABLED${COLOR_RESET} %-20s (uninitialized)\n" "$mod"
+            printf "  ${COLOR_RED}○ DISABLED${COLOR_RESET} ${COLOR_BOLD}%-20s${COLOR_RESET} (uninitialized)\n" "$mod"
         fi
     done
     echo ""
