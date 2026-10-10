@@ -10,6 +10,6 @@
 **Learning:** Terminal utilities that use ANSI escape codes for semantic formatting (like green for enabled, red for disabled) must provide a way to disable color output. This ensures accessibility for users with color vision deficiency or environments that don't support color rendering.
 **Action:** Always check the `NO_COLOR` environment variable before applying ANSI escape codes in CLI tools.
 
-## 2024-10-07 - Bold Highlighting and Help Menu Alignment in Shell TUIs
-**Learning:** Raw terminal outputs with multiple data columns or variables often lack visual hierarchy. Dynamic text (like module names) can blend into static strings, and raw spaces in help menus lead to misaligned columns when command lengths vary.
-**Action:** Always wrap dynamic variables in bold ANSI escape codes (`\033[1m`) and use formatted `printf` calls (e.g., `printf "  %-28s %s\n"`) rather than space-padded `echo` strings to construct accessible and clean CLI interfaces.
+## 2024-10-09 - CLI Visual Hierarchy and Strict Column Alignment
+**Learning:** Relying on 'echo' with hardcoded spaces for tabular help text results in misaligned columns when command names vary in length. Additionally, repetitive state-change actions lack impact without distinct visual cues. Furthermore, scripts utilizing 'set -euo pipefail' crash when format variables (e.g., COLOR_DIM) are used before being globally initialized.
+**Action:** Use 'printf' (e.g., 'printf "  %-28s %s\n" "cmd" "desc"') for rigorous CLI help text alignment. Combine standard iconography (▶, ■) with semantic colors (green, red) and bold dynamic variables to establish clear visual hierarchy for state changes. Always explicitly define all terminal formatting variables globally, checking for the absence of NO_COLOR (-z) rather than its presence, to properly enable colors and prevent unbound variable crashes.
