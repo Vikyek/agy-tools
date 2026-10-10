@@ -23,6 +23,9 @@
 ## 2026-09-27 - Optimize Array Comprehension and Recursion Overhead
 **Learning:** Generating sets out of Python dictionary keys and doing recursive python tree traversals when calculating dictionary frequencies is extremely slow and causes excessive allocations. Dictionaries natively evaluate key equality very fast with `item.keys() == first_keys` and bulk add counts to collections using `Counter.update()` without creating new memory or nested function frames.
 **Action:** When validating dictionary arrays or counting key frequencies in deep structures, always use `dict_keys` comparison fast paths, and `Counter.update()` coupled with iterative stack traversals rather than mapping to sets or using recursion.
+## 2026-10-10 - Parent-repo reviewers are blind to submodule diffs
+**Learning:** Committing inside the submodule still yields only a gitlink bump; GitHub cannot diff mode-160000 entries, and the sandbox lacks push creds for submodule remotes, so Bolt tasks there always stall at review.
+**Action:** Any task touching a submodule must (a) emit a format-patch artifact in the parent PR and (b) flag itself as a two-PR job at PLAN time, before edits.
 ## 2026-09-28 - Optimize Dictionary Key Fast Paths
 **Learning:** Generating sets out of Python dictionary keys and doing recursive python tree traversals is extremely slow. Dictionaries natively evaluate key equality very fast with `item.keys() == first_keys` and bulk add counts using `Counter.update()` without creating new memory or nested frames.
 **Action:** When validating dictionary arrays or counting key frequencies in deep structures, always use `dict_keys` comparison fast paths, and `Counter.update()` coupled with iterative stack traversals rather than mapping to sets or using recursion.
