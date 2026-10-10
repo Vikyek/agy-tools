@@ -32,3 +32,6 @@
 ## 2026-10-06 - Optimize Dictionary Array Schema Validations
 **Learning:** Checking dictionary schema consistency using set operations (e.g., `set(item.keys())`, `set.union`, `set.intersection`) is slow and allocates significant memory for homogeneous arrays of dictionaries.
 **Action:** Always implement a fast path using native `dict_keys` equality (`item.keys() == first_item.keys()`). This evaluates set-like equality in C, drastically improving runtime for the common case of identical schemas.
+## 2026-10-10 - Submodule changes are invisible to the parent-repo reviewer
+**Learning:** A gitlink bump carries no diff, so reviewers reject perf work done inside submodules; the sandbox also lacks push creds for submodule remotes.
+**Action:** Always emit .jules/patches/<submodule>-<branch>.patch and embed the diff in the PR body; flag submodule tasks as needing a companion PR up front.
